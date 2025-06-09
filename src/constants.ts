@@ -5,6 +5,8 @@ export enum Suit {
   Spades = "spades",
 }
 
+export const SUITS = [Suit.Hearts, Suit.Diamonds, Suit.Clubs, Suit.Spades];
+
 export enum Rank {
   Two = 2,
   Three = 3,
@@ -20,3 +22,19 @@ export enum Rank {
   King = 13,
   Ace = 14,
 }
+
+export const RANKS = [
+  Rank.Two,
+  Rank.Three,
+  Rank.Four,
+  Rank.Five,
+  Rank.Six,
+  Rank.Seven,
+  Rank.Eight,
+  Rank.Nine,
+  Rank.Ten,
+  Rank.Jack,
+  Rank.Queen,
+  Rank.King,
+  Rank.Ace,
+];
