@@ -1,8 +1,8 @@
 export enum Suit {
-  Hearts = "hearts",
-  Diamonds = "diamonds",
-  Clubs = "clubs",
-  Spades = "spades",
+  Hearts = 1,
+  Diamonds = 2,
+  Clubs = 3,
+  Spades = 4,
 }
 
 export const SUITS = [Suit.Hearts, Suit.Diamonds, Suit.Clubs, Suit.Spades];
@@ -38,3 +38,16 @@ export const RANKS = [
   Rank.King,
   Rank.Ace,
 ];
+
+export enum HandRank {
+  HighCard = 1,
+  OnePair = 2,
+  TwoPair = 3,
+  ThreeOfAKind = 4,
+  Straight = 5,
+  Flush = 6,
+  FullHouse = 7,
+  FourOfAKind = 8,
+  StraightFlush = 9,
+  RoyalFlush = 10,
+}
