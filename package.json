@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "tsx": "npx tsx src/index.ts",
-    "test": "vitest"
+    "test": "vitest run"
   },
   "keywords": [],
   "author": "",

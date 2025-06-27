@@ -6,12 +6,44 @@ export class Hand {
   private handCards: Card[];
 
   constructor(private cards: Card[]) {
-    if (cards.length < 5) {
-      throw new Error("5枚以上のカードが必要です");
+    if (cards.length !== 5) {
+      throw new Error("A hand must consist of exactly 5 cards.");
     }
-    const result = this.evaluate();
-    this.handRank = result.rank;
-    this.handCards = this.sort(result.cards);
+
+    this.handRank = this.evaluate();
+    this.handCards = this.sort(this.cards, this.handRank);
+  }
+
+  private static getCombinations<T>(array: T[], size: number): T[][] {
+    if (size > array.length) return [];
+    if (size === 0) return [[]];
+
+    const combinations: T[][] = [];
+    const generate = (start: number, combo: T[]) => {
+      if (combo.length === size) {
+        combinations.push([...combo]);
+        return;
+      }
+
+      for (let i = start; i < array.length; i++) {
+        combo.push(array[i]);
+        generate(i + 1, combo);
+        combo.pop();
+      }
+    };
+
+    generate(0, []);
+    return combinations;
+  }
+
+  static of(holeCards: Card[], communityCards: Card[]) {
+    if (holeCards.length !== 2 || communityCards.length < 3) {
+      throw new Error("Invalid number of cards for hand evaluation.");
+    }
+
+    const cards = [...holeCards, ...communityCards];
+    const combinations = Hand.getCombinations(cards, 5);
+    return combinations.map((combo) => new Hand(combo));
   }
 
   public getRank(): HandRank {
@@ -32,15 +64,44 @@ export class Hand {
     return this.compareKickers(other);
   }
 
-  private sort(cards: Card[]): Card[] {
-    return [...cards].sort((a, b) => {
+  private sort(cards: Card[], handRank: HandRank): Card[] {
+    const basicSortedCards = [...cards].sort((a, b) => {
       const rankComparison = b.rank - a.rank;
       if (rankComparison !== 0) {
         return rankComparison;
       }
 
-      return b.suit - a.suit;
+      return a.suit - b.suit;
     });
+
+    if (
+      handRank === HandRank.RoyalFlush ||
+      handRank === HandRank.StraightFlush ||
+      handRank === HandRank.Flush ||
+      handRank === HandRank.Straight ||
+      handRank === HandRank.HighCard
+    ) {
+      return basicSortedCards;
+    } else {
+      const rankCounts = this.getRankCounts();
+      const sortedByRankCount = Array.from(rankCounts.entries()).sort(
+        ([rankA, countA], [rankB, countB]) => {
+          if (countA !== countB) {
+            return countB - countA; // Sort by count descending
+          }
+          return rankB - rankA; // Sort by rank descending
+        }
+      );
+
+      const sortedCards: Card[] = [];
+      for (const [rank] of sortedByRankCount) {
+        const cardsOfRank = cards.filter((card) => card.rank === rank);
+        cardsOfRank.sort((a, b) => a.suit - b.suit); // Sort by suit ascending
+        sortedCards.push(...cardsOfRank);
+      }
+
+      return sortedCards;
+    }
   }
 
   private compareHandRanks(rank1: HandRank, rank2: HandRank): number {
@@ -64,9 +125,6 @@ export class Hand {
         if (highCard1 !== highCard2) return highCard1 - highCard2;
 
         // A-5-4-3-2のストレートの場合、5を最上位カードとして扱う
-        if (this.isLowStraight()) {
-          return 0; // 同じ低いストレートは同じ強さ
-        }
         return 0;
 
       case HandRank.Flush:
@@ -201,73 +259,41 @@ export class Hand {
     return 0;
   }
 
-  private evaluate(): { rank: HandRank; cards: Card[] } {
-    // 役の判定を強い順に行う
+  private evaluate(): HandRank {
     if (this.isRoyalFlush()) {
-      return { rank: HandRank.RoyalFlush, cards: this.getRoyalFlushCards() };
+      return HandRank.RoyalFlush;
     } else if (this.isStraightFlush()) {
-      return {
-        rank: HandRank.StraightFlush,
-        cards: this.getStraightFlushCards(),
-      };
+      return HandRank.StraightFlush;
     } else if (this.isFourOfAKind()) {
-      return { rank: HandRank.FourOfAKind, cards: this.getFourOfAKindCards() };
+      return HandRank.FourOfAKind;
     } else if (this.isFullHouse()) {
-      return { rank: HandRank.FullHouse, cards: this.getFullHouseCards() };
+      return HandRank.FullHouse;
     } else if (this.isFlush()) {
-      return { rank: HandRank.Flush, cards: this.getFlushCards() };
+      return HandRank.Flush;
     } else if (this.isStraight()) {
-      return { rank: HandRank.Straight, cards: this.getStraightCards() };
+      return HandRank.Straight;
     } else if (this.isThreeOfAKind()) {
-      return {
-        rank: HandRank.ThreeOfAKind,
-        cards: this.getThreeOfAKindCards(),
-      };
+      return HandRank.ThreeOfAKind;
     } else if (this.isTwoPair()) {
-      return { rank: HandRank.TwoPair, cards: this.getTwoPairCards() };
+      return HandRank.TwoPair;
     } else if (this.isOnePair()) {
-      return { rank: HandRank.OnePair, cards: this.getOnePairCards() };
+      return HandRank.OnePair;
     }
-    return { rank: HandRank.HighCard, cards: this.getHighCardCards() };
+    return HandRank.HighCard;
   }
 
   private isRoyalFlush(): boolean {
-    return (
-      this.isStraightFlush() &&
-      this.cards.some((card) => card.rank === Rank.Ace)
-    );
-  }
-
-  private getRoyalFlushCards(): Card[] {
-    return this.getStraightFlushCards();
+    const isStraightFlush = this.isStraightFlush();
+    return isStraightFlush && this.cards.some((card) => card.rank === Rank.Ace);
   }
 
   private isStraightFlush(): boolean {
     return this.isFlush() && this.isStraight();
   }
 
-  private getStraightFlushCards(): Card[] {
-    const flushCards = this.getFlushCards();
-    return this.getStraightCardsFrom(flushCards);
-  }
-
   private isFourOfAKind(): boolean {
     const rankCounts = this.getRankCounts();
     return Array.from(rankCounts.values()).some((count) => count === 4);
-  }
-
-  private getFourOfAKindCards(): Card[] {
-    const rankCounts = this.getRankCounts();
-    const fourRank = Array.from(rankCounts.entries()).find(
-      ([_, count]) => count === 4
-    )?.[0];
-    if (!fourRank) return [];
-
-    const fourCards = this.cards.filter((card) => card.rank === fourRank);
-    const kicker = this.cards
-      .filter((card) => card.rank !== fourRank)
-      .sort((a, b) => b.rank - a.rank)[0];
-    return [...fourCards, kicker];
   }
 
   private isFullHouse(): boolean {
@@ -276,28 +302,9 @@ export class Hand {
     return counts.includes(3) && counts.includes(2);
   }
 
-  private getFullHouseCards(): Card[] {
-    const rankCounts = this.getRankCounts();
-    const threeRank = Array.from(rankCounts.entries()).find(
-      ([_, count]) => count === 3
-    )?.[0];
-    const twoRank = Array.from(rankCounts.entries()).find(
-      ([_, count]) => count === 2
-    )?.[0];
-    if (!threeRank || !twoRank) return [];
-
-    const threeCards = this.cards.filter((card) => card.rank === threeRank);
-    const twoCards = this.cards.filter((card) => card.rank === twoRank);
-    return [...threeCards, ...twoCards];
-  }
-
   private isFlush(): boolean {
     const firstSuit = this.cards[0].suit;
     return this.cards.every((card) => card.suit === firstSuit);
-  }
-
-  private getFlushCards(): Card[] {
-    return [...this.cards].sort((a, b) => b.rank - a.rank).slice(0, 5);
   }
 
   private isStraight(): boolean {
@@ -307,80 +314,18 @@ export class Hand {
     if (uniqueRanks.length < 5) return false;
 
     // A-5-4-3-2のストレートを考慮
-    if (uniqueRanks.includes(Rank.Ace) && uniqueRanks.includes(Rank.Two)) {
-      const lowStraight = [
-        Rank.Ace,
-        Rank.Two,
-        Rank.Three,
-        Rank.Four,
-        Rank.Five,
-      ];
-      if (lowStraight.every((rank) => uniqueRanks.includes(rank))) return true;
-    }
+    const lowStraight = [Rank.Ace, Rank.Two, Rank.Three, Rank.Four, Rank.Five];
+    if (lowStraight.every((rank) => uniqueRanks.includes(rank))) return true;
 
     // 通常のストレート
-    for (let i = 0; i <= uniqueRanks.length - 5; i++) {
-      const straight = uniqueRanks.slice(i, i + 5);
-      if (straight[4] - straight[0] === 4) return true;
-    }
+    if (uniqueRanks[4] - uniqueRanks[0] === 4) return true;
+
     return false;
-  }
-
-  private getStraightCardsFrom(cards: Card[]): Card[] {
-    const uniqueRanks = Array.from(
-      new Set(cards.map((card) => card.rank))
-    ).sort((a, b) => a - b);
-
-    // A-5-4-3-2のストレートを考慮
-    if (uniqueRanks.includes(Rank.Ace) && uniqueRanks.includes(Rank.Two)) {
-      const lowStraight = [
-        Rank.Ace,
-        Rank.Two,
-        Rank.Three,
-        Rank.Four,
-        Rank.Five,
-      ];
-      if (lowStraight.every((rank) => uniqueRanks.includes(rank))) {
-        return lowStraight
-          .map((rank) => cards.find((card) => card.rank === rank))
-          .filter((card): card is Card => card !== undefined);
-      }
-    }
-
-    // 通常のストレート
-    for (let i = 0; i <= uniqueRanks.length - 5; i++) {
-      const straight = uniqueRanks.slice(i, i + 5);
-      if (straight[4] - straight[0] === 4) {
-        return straight
-          .map((rank) => cards.find((card) => card.rank === rank))
-          .filter((card): card is Card => card !== undefined);
-      }
-    }
-    return [];
-  }
-
-  private getStraightCards(): Card[] {
-    return this.getStraightCardsFrom(this.cards);
   }
 
   private isThreeOfAKind(): boolean {
     const rankCounts = this.getRankCounts();
     return Array.from(rankCounts.values()).some((count) => count === 3);
-  }
-
-  private getThreeOfAKindCards(): Card[] {
-    const rankCounts = this.getRankCounts();
-    const threeRank = Array.from(rankCounts.entries()).find(
-      ([_, count]) => count === 3
-    )?.[0];
-    if (!threeRank) return [];
-
-    const threeCards = this.cards.filter((card) => card.rank === threeRank);
-    const kickers = this.cards
-      .filter((card) => card.rank !== threeRank)
-      .sort((a, b) => b.rank - a.rank)
-      .slice(0, 2);
-    return [...threeCards, ...kickers];
   }
 
   private isTwoPair(): boolean {
@@ -391,55 +336,8 @@ export class Hand {
     return pairs.length === 2;
   }
 
-  private getTwoPairCards(): Card[] {
-    const rankCounts = this.getRankCounts();
-    const pairs = Array.from(rankCounts.entries())
-      .filter(([_, count]) => count === 2)
-      .sort((a, b) => b[0] - a[0])
-      .slice(0, 2);
-
-    if (pairs.length !== 2) return [];
-
-    const pairCards = pairs.flatMap(([rank]) =>
-      this.cards.filter((card) => card.rank === rank)
-    );
-    const kicker = this.cards
-      .filter((card) => !pairs.some(([rank]) => rank === card.rank))
-      .sort((a, b) => b.rank - a.rank)[0];
-    return [...pairCards, kicker];
-  }
-
   private isOnePair(): boolean {
     const rankCounts = this.getRankCounts();
     return Array.from(rankCounts.values()).some((count) => count === 2);
-  }
-
-  private getOnePairCards(): Card[] {
-    const rankCounts = this.getRankCounts();
-    const pairRank = Array.from(rankCounts.entries()).find(
-      ([_, count]) => count === 2
-    )?.[0];
-    if (!pairRank) return [];
-
-    const pairCards = this.cards.filter((card) => card.rank === pairRank);
-    const kickers = this.cards
-      .filter((card) => card.rank !== pairRank)
-      .sort((a, b) => b.rank - a.rank)
-      .slice(0, 3);
-    return [...pairCards, ...kickers];
-  }
-
-  private getHighCardCards(): Card[] {
-    return [...this.cards].sort((a, b) => b.rank - a.rank).slice(0, 5);
-  }
-
-  private isLowStraight(): boolean {
-    return (
-      this.handCards.some((card) => card.rank === Rank.Ace) &&
-      this.handCards.some((card) => card.rank === Rank.Two) &&
-      this.handCards.some((card) => card.rank === Rank.Three) &&
-      this.handCards.some((card) => card.rank === Rank.Four) &&
-      this.handCards.some((card) => card.rank === Rank.Five)
-    );
   }
 }
