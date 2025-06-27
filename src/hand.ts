@@ -65,15 +65,6 @@ export class Hand {
   }
 
   private sort(cards: Card[], handRank: HandRank): Card[] {
-    const basicSortedCards = [...cards].sort((a, b) => {
-      const rankComparison = b.rank - a.rank;
-      if (rankComparison !== 0) {
-        return rankComparison;
-      }
-
-      return a.suit - b.suit;
-    });
-
     if (
       handRank === HandRank.RoyalFlush ||
       handRank === HandRank.StraightFlush ||
@@ -81,7 +72,7 @@ export class Hand {
       handRank === HandRank.Straight ||
       handRank === HandRank.HighCard
     ) {
-      return basicSortedCards;
+      return [...cards].sort((a, b) => b.rank - a.rank);
     } else {
       const rankCounts = this.getRankCounts();
       const sortedByRankCount = Array.from(rankCounts.entries()).sort(
