@@ -77,7 +77,8 @@ export class Hand {
         const fourRank2 = this.getFourOfAKindRank(rankCounts2);
         if (fourRank1 !== fourRank2) return fourRank1 - fourRank2;
         return (
-          this.getKickerRank(rankCounts1) - this.getKickerRank(rankCounts2)
+          this.getTopKickerRank(rankCounts1) -
+          this.getTopKickerRank(rankCounts2)
         );
 
       case HandRank.FullHouse:
@@ -105,7 +106,8 @@ export class Hand {
         const lowPair2 = this.getLowPairRank(rankCounts2);
         if (lowPair1 !== lowPair2) return lowPair1 - lowPair2;
         return (
-          this.getKickerRank(rankCounts1) - this.getKickerRank(rankCounts2)
+          this.getTopKickerRank(rankCounts1) -
+          this.getTopKickerRank(rankCounts2)
         );
 
       case HandRank.OnePair:
@@ -133,10 +135,15 @@ export class Hand {
   }
 
   private getFourOfAKindRank(rankCounts: Map<Rank, number>): Rank {
-    return (
-      Array.from(rankCounts.entries()).find(([_, count]) => count === 4)?.[0] ||
-      Rank.Two
-    );
+    const rank = Array.from(rankCounts.entries()).find(
+      ([_, count]) => count === 4
+    )?.[0];
+
+    if (!rank) {
+      throw new Error("No Four of a Kind found in the hand.");
+    }
+
+    return rank;
   }
 
   private getThreeOfAKindRank(rankCounts: Map<Rank, number>): Rank {
@@ -169,7 +176,7 @@ export class Hand {
     );
   }
 
-  private getKickerRank(rankCounts: Map<Rank, number>): Rank {
+  private getTopKickerRank(rankCounts: Map<Rank, number>): Rank {
     return (
       Array.from(rankCounts.entries())
         .filter(([_, count]) => count === 1)

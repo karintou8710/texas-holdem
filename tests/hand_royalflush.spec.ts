@@ -86,7 +86,7 @@ describe("Hand - Royal Flush", () => {
   });
 });
 
-describe("Hand Strength - Royal Flush", () => {
+describe("Compare - Royal Flush", () => {
   test("should handle comparison between Royal Flushes of different suits correctly", () => {
     const heartsRoyalFlush = new Hand([
       new Card(Suit.Hearts, Rank.Ace),
