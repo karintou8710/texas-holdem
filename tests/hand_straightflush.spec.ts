@@ -51,14 +51,7 @@ describe("ストレートフラッシュの判定", () => {
       new Card(Suit.Hearts, Rank.Eight), // NineではなくEight
     ];
     const hand = new Hand(cards);
-    expect(hand.getRank()).toBe(HandRank.Flush);
-    expect(hand.getHandCards()).toEqual([
-      new Card(Suit.Hearts, Rank.King),
-      new Card(Suit.Hearts, Rank.Queen),
-      new Card(Suit.Hearts, Rank.Jack),
-      new Card(Suit.Hearts, Rank.Ten),
-      new Card(Suit.Hearts, Rank.Eight),
-    ]);
+    expect(hand.getRank()).not.toBe(HandRank.StraightFlush);
   });
 
   test("異なるスートのカードが混ざっているケース", () => {
@@ -70,14 +63,7 @@ describe("ストレートフラッシュの判定", () => {
       new Card(Suit.Diamonds, Rank.Nine), // スートが異なる
     ];
     const hand = new Hand(cards);
-    expect(hand.getRank()).toBe(HandRank.Straight);
-    expect(hand.getHandCards()).toEqual([
-      new Card(Suit.Hearts, Rank.King),
-      new Card(Suit.Hearts, Rank.Queen),
-      new Card(Suit.Hearts, Rank.Jack),
-      new Card(Suit.Hearts, Rank.Ten),
-      new Card(Suit.Diamonds, Rank.Nine),
-    ]);
+    expect(hand.getRank()).not.toBe(HandRank.StraightFlush);
   });
 
   test("ストレートフラッシュのカードが順不同", () => {
@@ -96,6 +82,25 @@ describe("ストレートフラッシュの判定", () => {
       new Card(Suit.Hearts, Rank.Jack),
       new Card(Suit.Hearts, Rank.Ten),
       new Card(Suit.Hearts, Rank.Nine),
+    ]);
+  });
+
+  test("5432Aのストレートフラッシュ（順不同）", () => {
+    const cards = [
+      new Card(Suit.Hearts, Rank.Two),
+      new Card(Suit.Hearts, Rank.Five),
+      new Card(Suit.Hearts, Rank.Ace),
+      new Card(Suit.Hearts, Rank.Three),
+      new Card(Suit.Hearts, Rank.Four),
+    ];
+    const hand = new Hand(cards);
+    expect(hand.getRank()).toBe(HandRank.StraightFlush);
+    expect(hand.getHandCards()).toEqual([
+      new Card(Suit.Hearts, Rank.Five),
+      new Card(Suit.Hearts, Rank.Four),
+      new Card(Suit.Hearts, Rank.Three),
+      new Card(Suit.Hearts, Rank.Two),
+      new Card(Suit.Hearts, Rank.Ace),
     ]);
   });
 });

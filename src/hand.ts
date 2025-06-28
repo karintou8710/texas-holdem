@@ -223,7 +223,11 @@ export class Hand {
 
   private isRoyalFlush(): boolean {
     const isStraightFlush = this.isStraightFlush();
-    return isStraightFlush && this.cards.some((card) => card.rank === Rank.Ace);
+    return (
+      isStraightFlush &&
+      this.cards.some((card) => card.rank === Rank.Ace) &&
+      this.cards.some((card) => card.rank === Rank.King) // Account for low straight (A-5-4-3-2)
+    );
   }
 
   private isStraightFlush(): boolean {
@@ -253,8 +257,7 @@ export class Hand {
     if (uniqueRanks.length < 5) return false;
 
     // A-5-4-3-2のストレートを考慮
-    const lowStraight = [Rank.Ace, Rank.Two, Rank.Three, Rank.Four, Rank.Five];
-    if (lowStraight.every((rank) => uniqueRanks.includes(rank))) return true;
+    if (this.isLowStraight()) return true;
 
     // 通常のストレート
     if (uniqueRanks[4] - uniqueRanks[0] === 4) return true;
@@ -265,6 +268,13 @@ export class Hand {
   private isThreeOfAKind(): boolean {
     const rankCounts = this.getRankCounts();
     return Array.from(rankCounts.values()).some((count) => count === 3);
+  }
+
+  private isLowStraight(): boolean {
+    const lowStraight = [Rank.Ace, Rank.Two, Rank.Three, Rank.Four, Rank.Five];
+    return lowStraight.every((rank) =>
+      this.cards.some((card) => card.rank === rank)
+    );
   }
 
   private isTwoPair(): boolean {
@@ -278,20 +288,6 @@ export class Hand {
   private isOnePair(): boolean {
     const rankCounts = this.getRankCounts();
     return Array.from(rankCounts.values()).some((count) => count === 2);
-  }
-
-  private isLowStraight(): boolean {
-    const uniqueRanks = Array.from(
-      new Set(this.cards.map((card) => card.rank))
-    ).sort((a, b) => a - b);
-    return (
-      uniqueRanks.length === 5 &&
-      uniqueRanks[4] === Rank.Ace &&
-      uniqueRanks[0] === Rank.Two &&
-      uniqueRanks[1] === Rank.Three &&
-      uniqueRanks[2] === Rank.Four &&
-      uniqueRanks[3] === Rank.Five
-    );
   }
 
   private sort(cards: Card[], handRank: HandRank): Card[] {
