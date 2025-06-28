@@ -1,7 +1,7 @@
 import { expect, test, describe } from "vitest";
-import { Hand } from "./hand";
-import { Card } from "./card";
-import { Rank, Suit, HandRank } from "./constants";
+import { Hand } from "src/hand";
+import { Card } from "src/card";
+import { Rank, Suit, HandRank } from "src/constants";
 
 describe("フォーカードの判定", () => {
   test("基本的なフォーカード", () => {

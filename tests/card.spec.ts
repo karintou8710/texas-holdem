@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
-import { Card } from "./card";
-import { Rank, Suit } from "./constants";
+import { Card } from "src/card";
+import { Rank, Suit } from "src/constants";
 
 test("カードが正しく作成される", () => {
   const card = new Card(Suit.Hearts, Rank.Ace);

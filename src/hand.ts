@@ -1,5 +1,6 @@
 import { Card } from "./card";
 import { HandRank, Rank } from "./constants";
+import { getCombinations } from "./utils";
 
 export class Hand {
   private handRank: HandRank;
@@ -14,35 +15,13 @@ export class Hand {
     this.handCards = this.sort(this.cards, this.handRank);
   }
 
-  private static getCombinations<T>(array: T[], size: number): T[][] {
-    if (size > array.length) return [];
-    if (size === 0) return [[]];
-
-    const combinations: T[][] = [];
-    const generate = (start: number, combo: T[]) => {
-      if (combo.length === size) {
-        combinations.push([...combo]);
-        return;
-      }
-
-      for (let i = start; i < array.length; i++) {
-        combo.push(array[i]);
-        generate(i + 1, combo);
-        combo.pop();
-      }
-    };
-
-    generate(0, []);
-    return combinations;
-  }
-
   static of(holeCards: Card[], communityCards: Card[]) {
     if (holeCards.length !== 2 || communityCards.length < 3) {
       throw new Error("Invalid number of cards for hand evaluation.");
     }
 
     const cards = [...holeCards, ...communityCards];
-    const combinations = Hand.getCombinations(cards, 5);
+    const combinations = getCombinations(cards, 5);
     return combinations.map((combo) => new Hand(combo));
   }
 
@@ -62,37 +41,6 @@ export class Hand {
 
     // 同じ役の場合、キッカーの強さを比較
     return this.compareKickers(other);
-  }
-
-  private sort(cards: Card[], handRank: HandRank): Card[] {
-    if (
-      handRank === HandRank.RoyalFlush ||
-      handRank === HandRank.StraightFlush ||
-      handRank === HandRank.Flush ||
-      handRank === HandRank.Straight ||
-      handRank === HandRank.HighCard
-    ) {
-      return [...cards].sort((a, b) => b.rank - a.rank);
-    } else {
-      const rankCounts = this.getRankCounts();
-      const sortedByRankCount = Array.from(rankCounts.entries()).sort(
-        ([rankA, countA], [rankB, countB]) => {
-          if (countA !== countB) {
-            return countB - countA; // Sort by count descending
-          }
-          return rankB - rankA; // Sort by rank descending
-        }
-      );
-
-      const sortedCards: Card[] = [];
-      for (const [rank] of sortedByRankCount) {
-        const cardsOfRank = cards.filter((card) => card.rank === rank);
-        cardsOfRank.sort((a, b) => a.suit - b.suit); // Sort by suit ascending
-        sortedCards.push(...cardsOfRank);
-      }
-
-      return sortedCards;
-    }
   }
 
   private compareHandRanks(rank1: HandRank, rank2: HandRank): number {
@@ -330,5 +278,59 @@ export class Hand {
   private isOnePair(): boolean {
     const rankCounts = this.getRankCounts();
     return Array.from(rankCounts.values()).some((count) => count === 2);
+  }
+
+  private isLowStraight(): boolean {
+    const uniqueRanks = Array.from(
+      new Set(this.cards.map((card) => card.rank))
+    ).sort((a, b) => a - b);
+    return (
+      uniqueRanks.length === 5 &&
+      uniqueRanks[4] === Rank.Ace &&
+      uniqueRanks[0] === Rank.Two &&
+      uniqueRanks[1] === Rank.Three &&
+      uniqueRanks[2] === Rank.Four &&
+      uniqueRanks[3] === Rank.Five
+    );
+  }
+
+  private sort(cards: Card[], handRank: HandRank): Card[] {
+    if (
+      handRank === HandRank.RoyalFlush ||
+      handRank === HandRank.StraightFlush ||
+      handRank === HandRank.Flush ||
+      handRank === HandRank.Straight ||
+      handRank === HandRank.HighCard
+    ) {
+      // Handle 5-4-3-2-A straight
+      if (this.isLowStraight()) {
+        return [...cards].sort((a, b) => {
+          if (a.rank === Rank.Ace) return 1;
+          if (b.rank === Rank.Ace) return -1;
+          return b.rank - a.rank;
+        });
+      }
+
+      return [...cards].sort((a, b) => b.rank - a.rank);
+    } else {
+      const rankCounts = this.getRankCounts();
+      const sortedByRankCount = Array.from(rankCounts.entries()).sort(
+        ([rankA, countA], [rankB, countB]) => {
+          if (countA !== countB) {
+            return countB - countA; // Sort by count descending
+          }
+          return rankB - rankA; // Sort by rank descending
+        }
+      );
+
+      const sortedCards: Card[] = [];
+      for (const [rank] of sortedByRankCount) {
+        const cardsOfRank = cards.filter((card) => card.rank === rank);
+        cardsOfRank.sort((a, b) => a.suit - b.suit); // Sort by suit ascending
+        sortedCards.push(...cardsOfRank);
+      }
+
+      return sortedCards;
+    }
   }
 }

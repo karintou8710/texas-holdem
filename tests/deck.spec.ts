@@ -1,6 +1,5 @@
 import { expect, test } from "vitest";
-import { Deck } from "./deck";
-import { RANKS, SUITS } from "./constants";
+import { Deck } from "src/deck";
 
 test("デッキが正しく初期化される", () => {
   const deck = new Deck();
