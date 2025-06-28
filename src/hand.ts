@@ -48,6 +48,10 @@ export class Hand {
   }
 
   private compareKickers(other: Hand): number {
+    if (this.handRank !== other.handRank) {
+      throw new Error("Cannot compare hands of different ranks.");
+    }
+
     const rankCounts1 = this.getRankCounts();
     const rankCounts2 = other.getRankCounts();
 
@@ -61,10 +65,7 @@ export class Hand {
         // ストレートの最上位カードを比較
         const highCard1 = this.handCards[0].rank;
         const highCard2 = other.handCards[0].rank;
-        if (highCard1 !== highCard2) return highCard1 - highCard2;
-
-        // A-5-4-3-2のストレートの場合、5を最上位カードとして扱う
-        return 0;
+        return highCard1 - highCard2;
 
       case HandRank.Flush:
         // フラッシュは5枚のカードを順番に比較
