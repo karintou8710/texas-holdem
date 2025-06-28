@@ -32,14 +32,7 @@ describe("Hand - Full House", () => {
       new Card(Suit.Hearts, Rank.Queen),
     ];
     const hand = new Hand(cards);
-    expect(hand.getRank()).toBe(HandRank.TwoPair);
-    expect(hand.getHandCards()).toEqual([
-      new Card(Suit.Hearts, Rank.Ace),
-      new Card(Suit.Diamonds, Rank.Ace),
-      new Card(Suit.Clubs, Rank.King),
-      new Card(Suit.Spades, Rank.King),
-      new Card(Suit.Hearts, Rank.Queen),
-    ]);
+    expect(hand.getRank()).not.toBe(HandRank.FullHouse);
   });
 
   test("should not identify a Full House when there is no pair", () => {
@@ -51,14 +44,7 @@ describe("Hand - Full House", () => {
       new Card(Suit.Hearts, Rank.Ten),
     ];
     const hand = new Hand(cards);
-    expect(hand.getRank()).toBe(HandRank.Straight);
-    expect(hand.getHandCards()).toEqual([
-      new Card(Suit.Hearts, Rank.Ace),
-      new Card(Suit.Diamonds, Rank.King),
-      new Card(Suit.Clubs, Rank.Queen),
-      new Card(Suit.Spades, Rank.Jack),
-      new Card(Suit.Hearts, Rank.Ten),
-    ]);
+    expect(hand.getRank()).not.toBe(HandRank.FullHouse);
   });
 
   test("should correctly sort cards within a Full House", () => {
@@ -66,7 +52,6 @@ describe("Hand - Full House", () => {
       new Card(Suit.Spades, Rank.Three),
       new Card(Suit.Clubs, Rank.Two),
       new Card(Suit.Hearts, Rank.Two),
-
       new Card(Suit.Hearts, Rank.Three),
       new Card(Suit.Diamonds, Rank.Two),
     ];

@@ -29,7 +29,7 @@ describe("Hand - One Pair", () => {
       new Card(Suit.Diamonds, Rank.King),
       new Card(Suit.Clubs, Rank.Queen),
       new Card(Suit.Spades, Rank.Jack),
-      new Card(Suit.Hearts, Rank.Ten),
+      new Card(Suit.Hearts, Rank.Nine),
     ];
     const hand = new Hand(cards);
     expect(hand.getRank()).not.toBe(HandRank.OnePair);
@@ -38,9 +38,9 @@ describe("Hand - One Pair", () => {
   test("should correctly sort cards within One Pair", () => {
     const cards = [
       new Card(Suit.Spades, Rank.Two),
-      new Card(Suit.Clubs, Rank.Two),
       new Card(Suit.Hearts, Rank.Five),
       new Card(Suit.Diamonds, Rank.Three),
+      new Card(Suit.Clubs, Rank.Two),
       new Card(Suit.Hearts, Rank.Four),
     ];
     const hand = new Hand(cards);

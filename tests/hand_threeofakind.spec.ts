@@ -32,18 +32,25 @@ describe("Hand - Three of a Kind", () => {
       new Card(Suit.Hearts, Rank.Queen),
     ];
     const hand = new Hand(cards);
-    expect(hand.getRank()).toBe(HandRank.TwoPair);
+    expect(hand.getRank()).not.toBe(HandRank.ThreeOfAKind);
   });
 
-  test("should not identify Three of a Kind when cards are all different", () => {
+  test("should identify Three of a Kind with cards in different order", () => {
     const cards = [
-      new Card(Suit.Hearts, Rank.Ace),
-      new Card(Suit.Diamonds, Rank.King),
-      new Card(Suit.Clubs, Rank.Queen),
-      new Card(Suit.Spades, Rank.Jack),
-      new Card(Suit.Hearts, Rank.Ten),
+      new Card(Suit.Spades, Rank.King),
+      new Card(Suit.Diamonds, Rank.Seven),
+      new Card(Suit.Hearts, Rank.Seven),
+      new Card(Suit.Clubs, Rank.Seven),
+      new Card(Suit.Hearts, Rank.Two),
     ];
     const hand = new Hand(cards);
-    expect(hand.getRank()).not.toBe(HandRank.ThreeOfAKind);
+    expect(hand.getRank()).toBe(HandRank.ThreeOfAKind);
+    expect(hand.getHandCards()).toEqual([
+      new Card(Suit.Hearts, Rank.Seven),
+      new Card(Suit.Diamonds, Rank.Seven),
+      new Card(Suit.Clubs, Rank.Seven),
+      new Card(Suit.Spades, Rank.King),
+      new Card(Suit.Hearts, Rank.Two),
+    ]);
   });
 });

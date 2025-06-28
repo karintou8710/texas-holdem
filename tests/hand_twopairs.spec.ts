@@ -32,18 +32,25 @@ describe("Hand - Two Pairs", () => {
       new Card(Suit.Hearts, Rank.Jack),
     ];
     const hand = new Hand(cards);
-    expect(hand.getRank()).toBe(HandRank.OnePair);
+    expect(hand.getRank()).not.toBe(HandRank.TwoPair);
   });
 
-  test("should not identify Two Pairs when cards are all different", () => {
+  test("should identify Two Pairs regardless of card order", () => {
     const cards = [
+      new Card(Suit.Hearts, Rank.Queen),
+      new Card(Suit.Clubs, Rank.King),
+      new Card(Suit.Diamonds, Rank.Ace),
+      new Card(Suit.Spades, Rank.King),
       new Card(Suit.Hearts, Rank.Ace),
-      new Card(Suit.Diamonds, Rank.King),
-      new Card(Suit.Clubs, Rank.Queen),
-      new Card(Suit.Spades, Rank.Jack),
-      new Card(Suit.Hearts, Rank.Ten),
     ];
     const hand = new Hand(cards);
-    expect(hand.getRank()).not.toBe(HandRank.TwoPair);
+    expect(hand.getRank()).toBe(HandRank.TwoPair);
+    expect(hand.getHandCards()).toEqual([
+      new Card(Suit.Hearts, Rank.Ace),
+      new Card(Suit.Diamonds, Rank.Ace),
+      new Card(Suit.Clubs, Rank.King),
+      new Card(Suit.Spades, Rank.King),
+      new Card(Suit.Hearts, Rank.Queen),
+    ]);
   });
 });

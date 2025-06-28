@@ -6,11 +6,11 @@ import { Rank, Suit, HandRank } from "src/constants";
 describe("Hand - Straight", () => {
   test("should correctly identify a Straight", () => {
     const cards = [
+      new Card(Suit.Hearts, Rank.Six),
       new Card(Suit.Hearts, Rank.Five),
       new Card(Suit.Clubs, Rank.Four),
       new Card(Suit.Spades, Rank.Three),
       new Card(Suit.Diamonds, Rank.Two),
-      new Card(Suit.Hearts, Rank.Six),
     ];
     const hand = new Hand(cards);
     expect(hand.getRank()).toBe(HandRank.Straight);
