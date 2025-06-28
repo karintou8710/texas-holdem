@@ -147,17 +147,27 @@ export class Hand {
   }
 
   private getThreeOfAKindRank(rankCounts: Map<Rank, number>): Rank {
-    return (
-      Array.from(rankCounts.entries()).find(([_, count]) => count === 3)?.[0] ||
-      Rank.Two
-    );
+    const rank = Array.from(rankCounts.entries()).find(
+      ([_, count]) => count === 3
+    )?.[0];
+
+    if (!rank) {
+      throw new Error("No Three of a Kind found in the hand.");
+    }
+
+    return rank;
   }
 
   private getPairRank(rankCounts: Map<Rank, number>): Rank {
-    return (
-      Array.from(rankCounts.entries()).find(([_, count]) => count === 2)?.[0] ||
-      Rank.Two
-    );
+    const rank = Array.from(rankCounts.entries()).find(
+      ([_, count]) => count === 2
+    )?.[0];
+
+    if (!rank) {
+      throw new Error("No Pair found in the hand.");
+    }
+
+    return rank;
   }
 
   private getHighPairRank(rankCounts: Map<Rank, number>): Rank {

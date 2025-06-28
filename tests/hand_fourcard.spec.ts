@@ -275,7 +275,7 @@ describe("Compare - Four of a Kind", () => {
       new Card(Suit.Diamonds, Rank.King),
       new Card(Suit.Clubs, Rank.Queen),
       new Card(Suit.Spades, Rank.Jack),
-      new Card(Suit.Hearts, Rank.Ten),
+      new Card(Suit.Hearts, Rank.Nine),
     ]);
 
     expect(fourOfAKind.getRank()).toBe(HandRank.FourOfAKind);
