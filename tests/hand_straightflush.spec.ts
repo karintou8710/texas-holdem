@@ -3,8 +3,8 @@ import { Hand } from "src/hand";
 import { Card } from "src/card";
 import { Rank, Suit, HandRank } from "src/constants";
 
-describe("ストレートフラッシュの判定", () => {
-  test("基本的なストレートフラッシュ", () => {
+describe("Hand - Straight Flush", () => {
+  test("should correctly identify basic Straight Flush", () => {
     const cards = [
       new Card(Suit.Hearts, Rank.King),
       new Card(Suit.Hearts, Rank.Queen),
@@ -23,7 +23,7 @@ describe("ストレートフラッシュの判定", () => {
     ]);
   });
 
-  test("異なるスートのストレートフラッシュ", () => {
+  test("should correctly identify Straight Flush with different suits", () => {
     const cards = [
       new Card(Suit.Spades, Rank.King),
       new Card(Suit.Spades, Rank.Queen),
@@ -42,31 +42,31 @@ describe("ストレートフラッシュの判定", () => {
     ]);
   });
 
-  test("ストレートフラッシュに似ているが、異なるケース", () => {
+  test("should not identify as Straight Flush when cards are similar but different", () => {
     const cards = [
       new Card(Suit.Hearts, Rank.King),
       new Card(Suit.Hearts, Rank.Queen),
       new Card(Suit.Hearts, Rank.Jack),
       new Card(Suit.Hearts, Rank.Ten),
-      new Card(Suit.Hearts, Rank.Eight), // NineではなくEight
+      new Card(Suit.Hearts, Rank.Eight), // Not Nine
     ];
     const hand = new Hand(cards);
     expect(hand.getRank()).not.toBe(HandRank.StraightFlush);
   });
 
-  test("異なるスートのカードが混ざっているケース", () => {
+  test("should not identify as Straight Flush when cards have mixed suits", () => {
     const cards = [
       new Card(Suit.Hearts, Rank.King),
       new Card(Suit.Hearts, Rank.Queen),
       new Card(Suit.Hearts, Rank.Jack),
       new Card(Suit.Hearts, Rank.Ten),
-      new Card(Suit.Diamonds, Rank.Nine), // スートが異なる
+      new Card(Suit.Diamonds, Rank.Nine), // Different suit
     ];
     const hand = new Hand(cards);
     expect(hand.getRank()).not.toBe(HandRank.StraightFlush);
   });
 
-  test("ストレートフラッシュのカードが順不同", () => {
+  test("should correctly identify Straight Flush when cards are unordered", () => {
     const cards = [
       new Card(Suit.Hearts, Rank.Jack),
       new Card(Suit.Hearts, Rank.King),
@@ -85,7 +85,7 @@ describe("ストレートフラッシュの判定", () => {
     ]);
   });
 
-  test("5432Aのストレートフラッシュ（順不同）", () => {
+  test("should correctly identify Straight Flush for 5432A (unordered)", () => {
     const cards = [
       new Card(Suit.Hearts, Rank.Two),
       new Card(Suit.Hearts, Rank.Five),

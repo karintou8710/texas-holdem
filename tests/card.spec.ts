@@ -2,13 +2,13 @@ import { expect, test } from "vitest";
 import { Card } from "src/card";
 import { Rank, Suit } from "src/constants";
 
-test("カードが正しく作成される", () => {
+test("should correctly create a card", () => {
   const card = new Card(Suit.Hearts, Rank.Ace);
   expect(card.suit).toBe(Suit.Hearts);
   expect(card.rank).toBe(Rank.Ace);
 });
 
-test("equalsメソッドが正しく動作する", () => {
+test("should correctly evaluate equality using equals method", () => {
   const card1 = new Card(Suit.Hearts, Rank.Ace);
   const card2 = new Card(Suit.Hearts, Rank.Ace);
   const card3 = new Card(Suit.Diamonds, Rank.Ace);
@@ -19,7 +19,7 @@ test("equalsメソッドが正しく動作する", () => {
   expect(card1.equals(card4)).toBe(false);
 });
 
-test("compareRankメソッドが正しく動作する", () => {
+test("should correctly compare ranks using compareRank method", () => {
   const ace = new Card(Suit.Hearts, Rank.Ace);
   const king = new Card(Suit.Hearts, Rank.King);
   const queen = new Card(Suit.Hearts, Rank.Queen);
