@@ -22,7 +22,12 @@ export class Hand {
 
     const cards = [...holeCards, ...communityCards];
     const combinations = getCombinations(cards, 5);
-    return combinations.map((combo) => new Hand(combo));
+    const hands = combinations.map((combo) => new Hand(combo));
+    const bestHand = hands.reduce((best, current) => {
+      return best.compare(current) > 0 ? best : current;
+    });
+
+    return bestHand;
   }
 
   public getRank(): HandRank {
