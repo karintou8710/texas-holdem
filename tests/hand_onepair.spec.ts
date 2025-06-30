@@ -54,3 +54,74 @@ describe("Hand - One Pair", () => {
     ]);
   });
 });
+
+describe("Compare - One Pair", () => {
+  test("should correctly compare two One Pair hands with different pair ranks", () => {
+    const hand1 = new Hand([
+      new Card(Suit.Hearts, Rank.Ace),
+      new Card(Suit.Diamonds, Rank.Ace),
+      new Card(Suit.Clubs, Rank.King),
+      new Card(Suit.Spades, Rank.Queen),
+      new Card(Suit.Hearts, Rank.Jack),
+    ]);
+
+    const hand2 = new Hand([
+      new Card(Suit.Hearts, Rank.King),
+      new Card(Suit.Diamonds, Rank.King),
+      new Card(Suit.Clubs, Rank.Ace),
+      new Card(Suit.Spades, Rank.Queen),
+      new Card(Suit.Hearts, Rank.Jack),
+    ]);
+
+    expect(hand1.getRank()).toBe(HandRank.OnePair);
+    expect(hand2.getRank()).toBe(HandRank.OnePair);
+    expect(hand1.compare(hand2)).toBeGreaterThan(0);
+    expect(hand2.compare(hand1)).toBeLessThan(0);
+  });
+
+  test("should correctly compare two One Pair hands with same pair but different kickers", () => {
+    const hand1 = new Hand([
+      new Card(Suit.Hearts, Rank.Ace),
+      new Card(Suit.Diamonds, Rank.Ace),
+      new Card(Suit.Clubs, Rank.King),
+      new Card(Suit.Spades, Rank.Queen),
+      new Card(Suit.Hearts, Rank.Jack),
+    ]);
+
+    const hand2 = new Hand([
+      new Card(Suit.Hearts, Rank.Ace),
+      new Card(Suit.Diamonds, Rank.Ace),
+      new Card(Suit.Clubs, Rank.Queen),
+      new Card(Suit.Spades, Rank.Jack),
+      new Card(Suit.Hearts, Rank.Ten),
+    ]);
+
+    expect(hand1.getRank()).toBe(HandRank.OnePair);
+    expect(hand2.getRank()).toBe(HandRank.OnePair);
+    expect(hand1.compare(hand2)).toBeGreaterThan(0);
+    expect(hand2.compare(hand1)).toBeLessThan(0);
+  });
+
+  test("should correctly rank One Pair higher than High Card", () => {
+    const hand1 = new Hand([
+      new Card(Suit.Hearts, Rank.Two),
+      new Card(Suit.Diamonds, Rank.Two),
+      new Card(Suit.Clubs, Rank.Three),
+      new Card(Suit.Spades, Rank.Four),
+      new Card(Suit.Hearts, Rank.Five),
+    ]);
+
+    const hand2 = new Hand([
+      new Card(Suit.Hearts, Rank.Ace),
+      new Card(Suit.Diamonds, Rank.King),
+      new Card(Suit.Clubs, Rank.Queen),
+      new Card(Suit.Spades, Rank.Jack),
+      new Card(Suit.Hearts, Rank.Nine),
+    ]);
+
+    expect(hand1.getRank()).toBe(HandRank.OnePair);
+    expect(hand2.getRank()).toBe(HandRank.HighCard);
+    expect(hand1.compare(hand2)).toBeGreaterThan(0);
+    expect(hand2.compare(hand1)).toBeLessThan(0);
+  });
+});

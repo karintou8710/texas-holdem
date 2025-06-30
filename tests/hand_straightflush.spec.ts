@@ -105,9 +105,9 @@ describe("Hand - Straight Flush", () => {
   });
 });
 
-describe("Compare - Royal Flush", () => {
+describe("Compare - Straight Flush", () => {
   test("should correctly rank higher Straight Flush over lower one", () => {
-    const higherHand = new Hand([
+    const hand1 = new Hand([
       new Card(Suit.Hearts, Rank.King),
       new Card(Suit.Hearts, Rank.Queen),
       new Card(Suit.Hearts, Rank.Jack),
@@ -115,7 +115,7 @@ describe("Compare - Royal Flush", () => {
       new Card(Suit.Hearts, Rank.Nine),
     ]);
 
-    const lowerHand = new Hand([
+    const hand2 = new Hand([
       new Card(Suit.Spades, Rank.Queen),
       new Card(Suit.Spades, Rank.Jack),
       new Card(Suit.Spades, Rank.Ten),
@@ -123,8 +123,10 @@ describe("Compare - Royal Flush", () => {
       new Card(Suit.Spades, Rank.Eight),
     ]);
 
-    expect(higherHand.compare(lowerHand)).toBeGreaterThan(0);
-    expect(lowerHand.compare(higherHand)).toBeLessThan(0);
+    expect(hand1.getRank()).toBe(HandRank.StraightFlush);
+    expect(hand2.getRank()).toBe(HandRank.StraightFlush);
+    expect(hand1.compare(hand2)).toBeGreaterThan(0);
+    expect(hand2.compare(hand1)).toBeLessThan(0);
   });
 
   test("should correctly identify same rank for equal Straight Flushes", () => {
@@ -144,12 +146,14 @@ describe("Compare - Royal Flush", () => {
       new Card(Suit.Spades, Rank.Nine),
     ]);
 
+    expect(hand1.getRank()).toBe(HandRank.StraightFlush);
+    expect(hand2.getRank()).toBe(HandRank.StraightFlush);
     expect(hand1.compare(hand2)).toBe(0);
     expect(hand2.compare(hand1)).toBe(0);
   });
 
   test("should correctly rank 65432 over 5432A", () => {
-    const higherHand = new Hand([
+    const hand1 = new Hand([
       new Card(Suit.Hearts, Rank.Six),
       new Card(Suit.Hearts, Rank.Five),
       new Card(Suit.Hearts, Rank.Four),
@@ -157,7 +161,7 @@ describe("Compare - Royal Flush", () => {
       new Card(Suit.Hearts, Rank.Two),
     ]);
 
-    const lowerHand = new Hand([
+    const hand2 = new Hand([
       new Card(Suit.Hearts, Rank.Five),
       new Card(Suit.Hearts, Rank.Four),
       new Card(Suit.Hearts, Rank.Three),
@@ -165,12 +169,14 @@ describe("Compare - Royal Flush", () => {
       new Card(Suit.Hearts, Rank.Ace),
     ]);
 
-    expect(higherHand.compare(lowerHand)).toBeGreaterThan(0);
-    expect(lowerHand.compare(higherHand)).toBeLessThan(0);
+    expect(hand1.getRank()).toBe(HandRank.StraightFlush);
+    expect(hand2.getRank()).toBe(HandRank.StraightFlush);
+    expect(hand1.compare(hand2)).toBeGreaterThan(0);
+    expect(hand2.compare(hand1)).toBeLessThan(0);
   });
 
   test("should correctly rank Straight Flush higher than Four of a Kind", () => {
-    const straightFlush = new Hand([
+    const hand1 = new Hand([
       new Card(Suit.Hearts, Rank.Six),
       new Card(Suit.Hearts, Rank.Five),
       new Card(Suit.Hearts, Rank.Four),
@@ -178,7 +184,7 @@ describe("Compare - Royal Flush", () => {
       new Card(Suit.Hearts, Rank.Two),
     ]);
 
-    const fourOfKind = new Hand([
+    const hand2 = new Hand([
       new Card(Suit.Hearts, Rank.Ace),
       new Card(Suit.Diamonds, Rank.Ace),
       new Card(Suit.Clubs, Rank.Ace),
@@ -186,12 +192,14 @@ describe("Compare - Royal Flush", () => {
       new Card(Suit.Hearts, Rank.King),
     ]);
 
-    expect(straightFlush.compare(fourOfKind)).toBeGreaterThan(0);
-    expect(fourOfKind.compare(straightFlush)).toBeLessThan(0);
+    expect(hand1.getRank()).toBe(HandRank.StraightFlush);
+    expect(hand2.getRank()).toBe(HandRank.FourOfAKind);
+    expect(hand1.compare(hand2)).toBeGreaterThan(0);
+    expect(hand2.compare(hand1)).toBeLessThan(0);
   });
 
   test("should correctly rank Straight Flush higher than Full House", () => {
-    const straightFlush = new Hand([
+    const hand1 = new Hand([
       new Card(Suit.Hearts, Rank.Six),
       new Card(Suit.Hearts, Rank.Five),
       new Card(Suit.Hearts, Rank.Four),
@@ -199,7 +207,7 @@ describe("Compare - Royal Flush", () => {
       new Card(Suit.Hearts, Rank.Two),
     ]);
 
-    const fullHouse = new Hand([
+    const hand2 = new Hand([
       new Card(Suit.Hearts, Rank.Ace),
       new Card(Suit.Diamonds, Rank.Ace),
       new Card(Suit.Clubs, Rank.Ace),
@@ -207,12 +215,14 @@ describe("Compare - Royal Flush", () => {
       new Card(Suit.Diamonds, Rank.King),
     ]);
 
-    expect(straightFlush.compare(fullHouse)).toBeGreaterThan(0);
-    expect(fullHouse.compare(straightFlush)).toBeLessThan(0);
+    expect(hand1.getRank()).toBe(HandRank.StraightFlush);
+    expect(hand2.getRank()).toBe(HandRank.FullHouse);
+    expect(hand1.compare(hand2)).toBeGreaterThan(0);
+    expect(hand2.compare(hand1)).toBeLessThan(0);
   });
 
   test("should correctly rank Straight Flush higher than Flush", () => {
-    const straightFlush = new Hand([
+    const hand1 = new Hand([
       new Card(Suit.Hearts, Rank.Six),
       new Card(Suit.Hearts, Rank.Five),
       new Card(Suit.Hearts, Rank.Four),
@@ -220,7 +230,7 @@ describe("Compare - Royal Flush", () => {
       new Card(Suit.Hearts, Rank.Two),
     ]);
 
-    const flush = new Hand([
+    const hand2 = new Hand([
       new Card(Suit.Hearts, Rank.Ace),
       new Card(Suit.Hearts, Rank.King),
       new Card(Suit.Hearts, Rank.Jack),
@@ -228,12 +238,14 @@ describe("Compare - Royal Flush", () => {
       new Card(Suit.Hearts, Rank.Seven),
     ]);
 
-    expect(straightFlush.compare(flush)).toBeGreaterThan(0);
-    expect(flush.compare(straightFlush)).toBeLessThan(0);
+    expect(hand1.getRank()).toBe(HandRank.StraightFlush);
+    expect(hand2.getRank()).toBe(HandRank.Flush);
+    expect(hand1.compare(hand2)).toBeGreaterThan(0);
+    expect(hand2.compare(hand1)).toBeLessThan(0);
   });
 
   test("should correctly rank Straight Flush higher than Straight", () => {
-    const straightFlush = new Hand([
+    const hand1 = new Hand([
       new Card(Suit.Hearts, Rank.Six),
       new Card(Suit.Hearts, Rank.Five),
       new Card(Suit.Hearts, Rank.Four),
@@ -241,7 +253,7 @@ describe("Compare - Royal Flush", () => {
       new Card(Suit.Hearts, Rank.Two),
     ]);
 
-    const straight = new Hand([
+    const hand2 = new Hand([
       new Card(Suit.Hearts, Rank.Ace),
       new Card(Suit.Diamonds, Rank.King),
       new Card(Suit.Clubs, Rank.Queen),
@@ -249,12 +261,14 @@ describe("Compare - Royal Flush", () => {
       new Card(Suit.Hearts, Rank.Ten),
     ]);
 
-    expect(straightFlush.compare(straight)).toBeGreaterThan(0);
-    expect(straight.compare(straightFlush)).toBeLessThan(0);
+    expect(hand1.getRank()).toBe(HandRank.StraightFlush);
+    expect(hand2.getRank()).toBe(HandRank.Straight);
+    expect(hand1.compare(hand2)).toBeGreaterThan(0);
+    expect(hand2.compare(hand1)).toBeLessThan(0);
   });
 
   test("should correctly rank Straight Flush higher than Three of a Kind", () => {
-    const straightFlush = new Hand([
+    const hand1 = new Hand([
       new Card(Suit.Hearts, Rank.Six),
       new Card(Suit.Hearts, Rank.Five),
       new Card(Suit.Hearts, Rank.Four),
@@ -262,7 +276,7 @@ describe("Compare - Royal Flush", () => {
       new Card(Suit.Hearts, Rank.Two),
     ]);
 
-    const threeOfKind = new Hand([
+    const hand2 = new Hand([
       new Card(Suit.Hearts, Rank.Ace),
       new Card(Suit.Diamonds, Rank.Ace),
       new Card(Suit.Clubs, Rank.Ace),
@@ -270,12 +284,14 @@ describe("Compare - Royal Flush", () => {
       new Card(Suit.Diamonds, Rank.Queen),
     ]);
 
-    expect(straightFlush.compare(threeOfKind)).toBeGreaterThan(0);
-    expect(threeOfKind.compare(straightFlush)).toBeLessThan(0);
+    expect(hand1.getRank()).toBe(HandRank.StraightFlush);
+    expect(hand2.getRank()).toBe(HandRank.ThreeOfAKind);
+    expect(hand1.compare(hand2)).toBeGreaterThan(0);
+    expect(hand2.compare(hand1)).toBeLessThan(0);
   });
 
   test("should correctly rank Straight Flush higher than Two Pair", () => {
-    const straightFlush = new Hand([
+    const hand1 = new Hand([
       new Card(Suit.Hearts, Rank.Six),
       new Card(Suit.Hearts, Rank.Five),
       new Card(Suit.Hearts, Rank.Four),
@@ -283,7 +299,7 @@ describe("Compare - Royal Flush", () => {
       new Card(Suit.Hearts, Rank.Two),
     ]);
 
-    const twoPair = new Hand([
+    const hand2 = new Hand([
       new Card(Suit.Hearts, Rank.Ace),
       new Card(Suit.Diamonds, Rank.Ace),
       new Card(Suit.Hearts, Rank.King),
@@ -291,12 +307,14 @@ describe("Compare - Royal Flush", () => {
       new Card(Suit.Clubs, Rank.Queen),
     ]);
 
-    expect(straightFlush.compare(twoPair)).toBeGreaterThan(0);
-    expect(twoPair.compare(straightFlush)).toBeLessThan(0);
+    expect(hand1.getRank()).toBe(HandRank.StraightFlush);
+    expect(hand2.getRank()).toBe(HandRank.TwoPair);
+    expect(hand1.compare(hand2)).toBeGreaterThan(0);
+    expect(hand2.compare(hand1)).toBeLessThan(0);
   });
 
   test("should correctly rank Straight Flush higher than One Pair", () => {
-    const straightFlush = new Hand([
+    const hand1 = new Hand([
       new Card(Suit.Hearts, Rank.Six),
       new Card(Suit.Hearts, Rank.Five),
       new Card(Suit.Hearts, Rank.Four),
@@ -304,7 +322,7 @@ describe("Compare - Royal Flush", () => {
       new Card(Suit.Hearts, Rank.Two),
     ]);
 
-    const onePair = new Hand([
+    const hand2 = new Hand([
       new Card(Suit.Hearts, Rank.Ace),
       new Card(Suit.Diamonds, Rank.Ace),
       new Card(Suit.Hearts, Rank.King),
@@ -312,12 +330,14 @@ describe("Compare - Royal Flush", () => {
       new Card(Suit.Clubs, Rank.Jack),
     ]);
 
-    expect(straightFlush.compare(onePair)).toBeGreaterThan(0);
-    expect(onePair.compare(straightFlush)).toBeLessThan(0);
+    expect(hand1.getRank()).toBe(HandRank.StraightFlush);
+    expect(hand2.getRank()).toBe(HandRank.OnePair);
+    expect(hand1.compare(hand2)).toBeGreaterThan(0);
+    expect(hand2.compare(hand1)).toBeLessThan(0);
   });
 
   test("should correctly rank Straight Flush higher than High Card", () => {
-    const straightFlush = new Hand([
+    const hand1 = new Hand([
       new Card(Suit.Hearts, Rank.Six),
       new Card(Suit.Hearts, Rank.Five),
       new Card(Suit.Hearts, Rank.Four),
@@ -325,7 +345,7 @@ describe("Compare - Royal Flush", () => {
       new Card(Suit.Hearts, Rank.Two),
     ]);
 
-    const highCard = new Hand([
+    const hand2 = new Hand([
       new Card(Suit.Hearts, Rank.Ace),
       new Card(Suit.Diamonds, Rank.King),
       new Card(Suit.Hearts, Rank.Queen),
@@ -333,7 +353,9 @@ describe("Compare - Royal Flush", () => {
       new Card(Suit.Clubs, Rank.Nine),
     ]);
 
-    expect(straightFlush.compare(highCard)).toBeGreaterThan(0);
-    expect(highCard.compare(straightFlush)).toBeLessThan(0);
+    expect(hand1.getRank()).toBe(HandRank.StraightFlush);
+    expect(hand2.getRank()).toBe(HandRank.HighCard);
+    expect(hand1.compare(hand2)).toBeGreaterThan(0);
+    expect(hand2.compare(hand1)).toBeLessThan(0);
   });
 });
