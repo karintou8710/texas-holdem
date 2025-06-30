@@ -1,6 +1,8 @@
 export function getCombinations<T>(array: T[], size: number): T[][] {
-  if (size > array.length) return [];
-  if (size === 0) return [[]];
+  if (size > array.length || size < 0)
+    throw new Error("Invalid combination size");
+
+  if (size === 0) return [[...array]];
 
   const combinations: T[][] = [];
   const generate = (start: number, combo: T[]) => {

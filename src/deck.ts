@@ -1,5 +1,6 @@
 import { Card } from "./card";
 import { RANKS, SUITS } from "./constants";
+import { getCombinations } from "./utils";
 
 export class Deck {
   private cards: Card[] = [];
@@ -37,7 +38,24 @@ export class Deck {
     return this.cards.length;
   }
 
+  public getCards(): Card[] {
+    return [...this.cards]; // Return a copy to prevent external modification
+  }
+
+  public removeCard(card: Card) {
+    const index = this.cards.findIndex(
+      (c) => c.suit === card.suit && c.rank === card.rank
+    );
+    if (index !== -1) {
+      this.cards.splice(index, 1);
+    }
+  }
+
   public reset() {
     this.cards = this.createDeck();
+  }
+
+  public generateCombinations(count: number): Card[][] {
+    return getCombinations(this.cards, count);
   }
 }

@@ -11,4 +11,8 @@ export class Card {
   compareRank(other: Card) {
     return this.rank - other.rank;
   }
+
+  toString(): string {
+    return `${this.suit}-${this.rank}`;
+  }
 }

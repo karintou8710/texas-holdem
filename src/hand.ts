@@ -23,11 +23,40 @@ export class Hand {
     const cards = [...holeCards, ...communityCards];
     const combinations = getCombinations(cards, 5);
     const hands = combinations.map((combo) => new Hand(combo));
+
+    return this.getBestHand(hands);
+  }
+
+  static getBestHand(hands: Hand[]): Hand {
+    if (hands.length === 0) {
+      throw new Error("No hands to compare.");
+    }
+
     const bestHand = hands.reduce((best, current) => {
       return best.compare(current) > 0 ? best : current;
     });
 
     return bestHand;
+  }
+
+  static multiCompare(hands: Hand[]): boolean[] {
+    if (hands.length === 0) {
+      throw new Error("No hands to compare.");
+    }
+
+    if (hands.length === 1) {
+      return [true]; // Only one hand, so it's the winner
+    }
+
+    const results: boolean[] = [];
+    const bestHand = Hand.getBestHand(hands);
+
+    for (let i = 0; i < hands.length; i++) {
+      const comparison = bestHand.compare(hands[i]);
+      results.push(comparison === 0); // true if tied with best hand, false otherwise
+    }
+
+    return results;
   }
 
   public getRank(): HandRank {
