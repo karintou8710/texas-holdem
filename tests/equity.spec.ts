@@ -1,23 +1,20 @@
 import { expect, test, describe } from "vitest";
-import { EquityCalculator, PlayerHand } from "src/equity";
+import { EquityCalculator } from "src/equity";
 import { Card } from "src/card";
+import { HoleCards } from "src/holecards";
 import { Suit, Rank } from "src/constants";
 
 describe("calculateExactEquity - Exact calculation", () => {
   test("should calculate exact equity with all community cards known", () => {
-    const players: PlayerHand[] = [
-      {
-        holeCards: [
-          new Card(Suit.Hearts, Rank.Ace),
-          new Card(Suit.Spades, Rank.King),
-        ],
-      },
-      {
-        holeCards: [
-          new Card(Suit.Hearts, Rank.Queen),
-          new Card(Suit.Diamonds, Rank.Jack),
-        ],
-      },
+    const players: HoleCards[] = [
+      new HoleCards(
+        new Card(Suit.Hearts, Rank.Ace),
+        new Card(Suit.Spades, Rank.King)
+      ),
+      new HoleCards(
+        new Card(Suit.Hearts, Rank.Queen),
+        new Card(Suit.Diamonds, Rank.Jack)
+      ),
     ];
 
     const communityCards = [
@@ -41,19 +38,15 @@ describe("calculateExactEquity - Exact calculation", () => {
   });
 
   test("should calculate exact equity with some unknown cards", () => {
-    const players: PlayerHand[] = [
-      {
-        holeCards: [
-          new Card(Suit.Hearts, Rank.Ace),
-          new Card(Suit.Spades, Rank.Ace),
-        ],
-      },
-      {
-        holeCards: [
-          new Card(Suit.Hearts, Rank.King),
-          new Card(Suit.Diamonds, Rank.King),
-        ],
-      },
+    const players: HoleCards[] = [
+      new HoleCards(
+        new Card(Suit.Hearts, Rank.Ace),
+        new Card(Suit.Spades, Rank.Ace)
+      ),
+      new HoleCards(
+        new Card(Suit.Hearts, Rank.King),
+        new Card(Suit.Diamonds, Rank.King)
+      ),
     ];
 
     const communityCards = [

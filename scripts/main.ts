@@ -1,20 +1,17 @@
-import { EquityCalculator, PlayerHand } from "src/equity";
+import { EquityCalculator } from "src/equity";
 import { Card } from "src/card";
+import { HoleCards } from "src/holecards";
 import { Suit, Rank } from "src/constants";
 
-const players: PlayerHand[] = [
-  {
-    holeCards: [
-      new Card(Suit.Hearts, Rank.Ace),
-      new Card(Suit.Spades, Rank.Ace),
-    ],
-  },
-  {
-    holeCards: [
-      new Card(Suit.Hearts, Rank.King),
-      new Card(Suit.Diamonds, Rank.King),
-    ],
-  },
+const players: HoleCards[] = [
+  new HoleCards(
+    new Card(Suit.Hearts, Rank.Ace),
+    new Card(Suit.Spades, Rank.Ace)
+  ),
+  new HoleCards(
+    new Card(Suit.Hearts, Rank.King),
+    new Card(Suit.Diamonds, Rank.King)
+  ),
 ];
 
 const communityCards = [

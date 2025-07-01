@@ -1,16 +1,13 @@
 import { Card } from "./card";
 import { Hand } from "./hand";
 import { Deck } from "./deck";
-
-export interface PlayerHand {
-  holeCards: Card[];
-}
+import { HoleCards } from "./holecards";
 
 export type Equity = number;
 
 export class EquityCalculator {
   static calculateExactEquity(
-    players: PlayerHand[],
+    players: HoleCards[],
     communityCards: Card[] = []
   ): Equity[] {
     if (players.length < 2) {
@@ -25,7 +22,7 @@ export class EquityCalculator {
     const deck = new Deck();
 
     players.forEach((player) => {
-      player.holeCards.forEach((card) => {
+      player.getCards().forEach((card) => {
         deck.removeCard(card);
       });
     });
@@ -46,7 +43,7 @@ export class EquityCalculator {
 
       // Evaluate each player's best hand
       const playerHands = players.map((player) =>
-        Hand.of(player.holeCards, completeCommunity)
+        Hand.of(player.getCards(), completeCommunity)
       );
       const compareResult = Hand.multiCompare(playerHands);
 
