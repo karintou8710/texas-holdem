@@ -22,7 +22,7 @@ export function getCombinations<T>(array: T[], size: number): T[][] {
   return combinations;
 }
 
-export function round(n, decimalPlaces = 0) {
+export function round(n: number, decimalPlaces = 0) {
   const factor = 10 ** decimalPlaces;
   return Math.round(n * factor) / factor;
 }
