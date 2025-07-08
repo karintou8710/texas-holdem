@@ -159,7 +159,7 @@ deck.removeCard(new Card(Suit.Hearts, Rank.Ace));
 ### Multiple Hand Comparison
 
 ```typescript
-import { Hand } from "@koki-kosaki/poker";
+import { Hand } from "@karintou8710/poker";
 
 const hands = [hand1, hand2, hand3];
 const results = Hand.multiCompare(hands);
