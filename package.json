@@ -3,13 +3,13 @@
   "version": "1.0.0",
   "description": "A high-performance TypeScript poker hand evaluator",
   "main": "dist/index.js",
-  "module": "dist/esm/index.js",
+  "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/esm/index.js",
-      "require": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
     }
   },
   "files": [
@@ -17,12 +17,11 @@
     "README.md"
   ],
   "scripts": {
-    "build": "npm run clean && npm run build:cjs && npm run build:esm",
-    "build:cjs": "tsc",
-    "build:esm": "tsc -p tsconfig.esm.json",
+    "build": "tsup",
+    "build:watch": "tsup --watch",
     "tsx": "tsx scripts/main.ts",
     "test": "vitest run",
-    "prepublishOnly": "npm run build",
+    "prepublishOnly": "pnpm build",
     "clean": "rm -rf dist"
   },
   "keywords": [
@@ -45,6 +44,7 @@
   },
   "devDependencies": {
     "@types/node": "^22.15.30",
+    "tsup": "^8.5.0",
     "tsx": "^4.19.4",
     "typescript": "^5.8.3",
     "vitest": "^3.2.3"
