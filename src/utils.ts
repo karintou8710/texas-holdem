@@ -21,3 +21,8 @@ export function getCombinations<T>(array: T[], size: number): T[][] {
   generate(0, []);
   return combinations;
 }
+
+export function round(n, decimalPlaces = 0) {
+  const factor = 10 ** decimalPlaces;
+  return Math.round(n * factor) / factor;
+}

@@ -3,6 +3,7 @@ import { EquityCalculator } from "src/equity";
 import { Card } from "src/card";
 import { HoleCards } from "src/holecards";
 import { Suit, Rank } from "src/constants";
+import { round } from "src/utils";
 
 describe("calculateExactEquity - Exact calculation", () => {
   test("should calculate exact equity with all community cards known", () => {
@@ -60,9 +61,34 @@ describe("calculateExactEquity - Exact calculation", () => {
       communityCards
     );
 
-    expect(results).toHaveLength(2);
+    expect(round(results[0], 2)).toBe(91.21);
+    expect(round(results[1], 2)).toBe(8.79);
+  });
 
-    // AA should have higher equity than KK
-    expect(results[0]).toBeGreaterThan(results[1]);
+  test("should calculate exact equity with some unknown cards", () => {
+    const players: HoleCards[] = [
+      new HoleCards(
+        new Card(Suit.Hearts, Rank.Ace),
+        new Card(Suit.Hearts, Rank.King)
+      ),
+      new HoleCards(
+        new Card(Suit.Spades, Rank.Five),
+        new Card(Suit.Diamonds, Rank.Five)
+      ),
+    ];
+
+    const communityCards = [
+      new Card(Suit.Spades, Rank.King),
+      new Card(Suit.Hearts, Rank.Five),
+      new Card(Suit.Hearts, Rank.Two),
+    ];
+
+    const results = EquityCalculator.calculateExactEquity(
+      players,
+      communityCards
+    );
+
+    expect(round(results[0], 2)).toBe(30.71);
+    expect(round(results[1], 2)).toBe(69.29);
   });
 });
