@@ -1,23 +1,16 @@
 import { EquityCalculator } from "src/equity";
 import { Card } from "src/card";
 import { HoleCards } from "src/holecards";
-import { Suit, Rank } from "src/constants";
 
 const players: HoleCards[] = [
-  new HoleCards(
-    new Card(Suit.Hearts, Rank.Ace),
-    new Card(Suit.Spades, Rank.Ace)
-  ),
-  new HoleCards(
-    new Card(Suit.Hearts, Rank.King),
-    new Card(Suit.Diamonds, Rank.King)
-  ),
+  HoleCards.fromWords("AhAs"),
+  HoleCards.fromWords("KhKs"),
 ];
 
 const communityCards = [
-  new Card(Suit.Hearts, Rank.Two),
-  new Card(Suit.Clubs, Rank.Three),
-  new Card(Suit.Spades, Rank.Four),
+  Card.fromWord("2h"),
+  Card.fromWord("3c"),
+  Card.fromWord("4s"),
 ];
 
 const results = EquityCalculator.calculateExactEquity(players, communityCards);
