@@ -23,12 +23,13 @@
     }
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "tests/**/*",
+    "scripts/**/*"
   ],
   "exclude": [
     "node_modules",
     "dist",
-    "tests",
     "scripts"
   ]
 }
